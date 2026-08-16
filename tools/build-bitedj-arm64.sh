@@ -28,7 +28,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libportmidi-dev libsndio-dev \
     libavcodec-dev libavformat-dev libavutil-dev libswresample-dev \
     libchromaprint-dev libfftw3-dev libflac-dev libid3tag0-dev libmad0-dev \
-    libmodplug-dev libmp4v2-dev libopus-dev libopusfile-dev libsndfile1-dev \
+    libmodplug-dev libopus-dev libopusfile-dev libsndfile1-dev \
     libshout3-dev libtag1-dev libvorbis-dev libwavpack-dev \
     libebur128-dev librubberband-dev libsoundtouch-dev \
     libusb-1.0-0-dev libhidapi-dev liblilv-dev libserd-dev libsord-dev \
