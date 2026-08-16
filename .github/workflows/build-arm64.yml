@@ -1,0 +1,27 @@
+name: Build Ubuntu 24.04 ARM64
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build BiteDJ
+        run: bash tools/build-bitedj-arm64.sh
+
+      - name: Upload ARM64 package
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitedj-ubuntu-24.04-arm64
+          path: dist-arm64/bitedj-ubuntu-24.04-arm64.tar.gz
+          if-no-files-found: error
