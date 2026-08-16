@@ -22,7 +22,7 @@ fi
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential cmake ninja-build pkg-config git ccache \
-    qt6-base-dev qt6-declarative-dev qt6-tools-dev qt6-tools-dev-tools libqt6svg6-dev \
+    qt6-base-dev qt6-declarative-dev qt6-5compat-dev qt6-tools-dev qt6-tools-dev-tools libqt6svg6-dev \
     qtkeychain-qt6-dev \
     libasound2-dev libjack-jackd2-dev libpulse-dev portaudio19-dev \
     libportmidi-dev libsndio-dev \
