@@ -68,22 +68,25 @@ tar -C "${OUT_DIR}" -czf "${OUT_DIR}/bitedj-ubuntu-24.04-arm64.tar.gz" bitedj-ar
 DEB_ROOT="${BUILD_DIR}/deb-root"
 DEB_VERSION="1.0.0"
 rm -rf "${DEB_ROOT}"
-DESTDIR="${DEB_ROOT}" cmake --install "${BUILD_DIR}" --prefix /usr --strip --config Release
-mkdir -p "${DEB_ROOT}/usr/bin" "${DEB_ROOT}/usr/share/bitedj" "${DEB_ROOT}/DEBIAN"
-if [[ -f "${DEB_ROOT}/usr/bin/mixxx" ]]; then
-    mv "${DEB_ROOT}/usr/bin/mixxx" "${DEB_ROOT}/usr/bin/bitedj"
+mkdir -p "${DEB_ROOT}/usr/bin" "${DEB_ROOT}/usr/share/bitedj" \
+    "${DEB_ROOT}/usr/share/doc/bitedj" "${DEB_ROOT}/usr/share/applications" \
+    "${DEB_ROOT}/usr/share/icons/hicolor" "${DEB_ROOT}/usr/share/metainfo" "${DEB_ROOT}/DEBIAN"
+cp "${BUILD_DIR}/mixxx" "${DEB_ROOT}/usr/bin/bitedj"
+for resource_dir in skins controllers effects translations keyboard; do
+    cp -a "${ROOT_DIR}/res/${resource_dir}" "${DEB_ROOT}/usr/share/bitedj/"
+done
+cp -a "${ROOT_DIR}/res/images/icons/." "${DEB_ROOT}/usr/share/icons/hicolor/"
+cp "${ROOT_DIR}/LICENSE" "${ROOT_DIR}/README.md" "${DEB_ROOT}/usr/share/doc/bitedj/"
+if [[ -f "${ROOT_DIR}/res/Mixxx-Manual.pdf" ]]; then
+    cp "${ROOT_DIR}/res/Mixxx-Manual.pdf" "${DEB_ROOT}/usr/share/doc/bitedj/"
 fi
-if [[ -d "${DEB_ROOT}/usr/share/mixxx" ]]; then
-    cp -a "${DEB_ROOT}/usr/share/mixxx/." "${DEB_ROOT}/usr/share/bitedj/"
-    rm -rf "${DEB_ROOT}/usr/share/mixxx"
-fi
-if [[ -f "${DEB_ROOT}/usr/share/applications/org.mixxx.Mixxx.desktop" ]]; then
-    mv "${DEB_ROOT}/usr/share/applications/org.mixxx.Mixxx.desktop" \
+chmod 0755 "${DEB_ROOT}/usr/bin/bitedj"
+if [[ -f "${ROOT_DIR}/res/linux/org.mixxx.Mixxx.desktop" ]]; then
+    cp "${ROOT_DIR}/res/linux/org.mixxx.Mixxx.desktop" \
        "${DEB_ROOT}/usr/share/applications/us.deckshark.BiteDJ.desktop"
     sed -i 's/org\.mixxx\.Mixxx/us.deckshark.BiteDJ/g; s/Exec=mixxx/Exec=bitedj/g; s/Mixxx/BiteDJ/g' \
        "${DEB_ROOT}/usr/share/applications/us.deckshark.BiteDJ.desktop"
 fi
-rm -rf "${DEB_ROOT}/usr/share/mixxx" "${DEB_ROOT}/usr/share/doc/mixxx"
 cat > "${DEB_ROOT}/DEBIAN/control" <<EOF
 Package: bitedj
 Version: ${DEB_VERSION}
