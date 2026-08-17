@@ -34,7 +34,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libebur128-dev librubberband-dev libsoundtouch-dev \
     libusb-1.0-0-dev libhidapi-dev liblilv-dev libserd-dev libsord-dev \
     libsratom-dev libzix-dev libprotobuf-dev protobuf-compiler \
-    libsqlite3-dev libupower-glib-dev libdbus-1-dev \
+    libsqlite3-dev libupower-glib-dev libdbus-1-dev libmsgsl-dev \
     libglu1-mesa-dev libx11-dev libxext-dev libxi-dev libxrandr-dev \
     libxrender-dev libxfixes-dev libxkbcommon-dev fonts-open-sans fonts-ubuntu
 
@@ -46,6 +46,7 @@ cmake -S "${ROOT_DIR}" -B "${BUILD_DIR}" -G Ninja \
     -DDOWNLOAD_MANUAL=OFF \
     -DWARNINGS_FATAL=OFF \
     -DQT6=ON \
+    -DFAAD=OFF \
     -DCMAKE_INSTALL_PREFIX=/usr
 
 cmake --build "${BUILD_DIR}" --parallel "$(nproc)" --target mixxx
