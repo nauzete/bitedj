@@ -87,11 +87,7 @@ if [[ -f "${ROOT_DIR}/res/linux/org.mixxx.Mixxx.desktop" ]]; then
     sed -i 's/org\.mixxx\.Mixxx/us.deckshark.BiteDJ/g; s/Exec=mixxx/Exec=bitedj/g; s/Mixxx/BiteDJ/g' \
        "${DEB_ROOT}/usr/share/applications/us.deckshark.BiteDJ.desktop"
 fi
-SHLIB_DEPS="$(dpkg-shlibdeps -O -e"${DEB_ROOT}/usr/bin/bitedj" 2>/dev/null | sed -n 's/^shlibs:Depends=//p')"
-if [[ -z "${SHLIB_DEPS}" ]]; then
-    echo "No se pudieron determinar las dependencias ELF del ejecutable." >&2
-    exit 1
-fi
+RUNTIME_DEPS="libqt6concurrent6, libqt6core5compat6, libqt6dbus6, libqt6gui6, libqt6network6, libqt6opengl6, libqt6qml6, libqt6sql6, libqt6svg6, libqt6test6, libqt6widgets6, libqt6xml6, libasound2t64, libavcodec60, libavformat60, libavutil58, libchromaprint1, libdbus-1-3, libebur128-1, libfftw3-double3, libflac12t64, libgl1, libglu1-mesa, libhidapi-hidraw0, liblilv-0-0, libmad0, libmodplug1, libmp3lame0, libopus0, libopusfile0, libportaudio2, libportmidi0, libpulse0, librubberband2, libserd-0-0, libshout3, libsndfile1, libsord-0-0, libsoundtouch1, libsratom-0-0, libsqlite3-0, libtag1v5, libusb-1.0-0, libupower-glib3, libvorbis0a, libvorbisenc2, libwavpack1, libx11-6, libxext6, libxfixes3, libxi6, libxkbcommon0, libxrandr2, libxrender1, libzix-0-0, libprotobuf32t64"
 cat > "${DEB_ROOT}/DEBIAN/control" <<EOF
 Package: bitedj
 Version: ${DEB_VERSION}
@@ -100,7 +96,7 @@ Priority: optional
 Architecture: arm64
 Maintainer: TeamDeckshark
 Homepage: https://github.com/TeamDeckshark/bitedj
-Depends: ${SHLIB_DEPS}, fonts-open-sans, fonts-ubuntu, libqt6sql6-sqlite, qt6-qpa-plugins, libqt6core5compat6
+Depends: ${RUNTIME_DEPS}, fonts-open-sans, fonts-ubuntu, libqt6sql6-sqlite, qt6-qpa-plugins
 Description: BiteDJ digital DJ application
  Independent touchscreen-oriented DJ software based on Mixxx.
 EOF
