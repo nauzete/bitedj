@@ -21,7 +21,7 @@ fi
 
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    build-essential cmake ninja-build pkg-config git ccache libgtest-dev \
+    build-essential cmake ninja-build pkg-config git ccache dpkg-dev libgtest-dev \
     qt6-base-dev qt6-declarative-dev qt6-5compat-dev qt6-tools-dev qt6-tools-dev-tools libqt6svg6-dev \
     qtkeychain-qt6-dev \
     libasound2-dev libjack-jackd2-dev libpulse-dev portaudio19-dev \
@@ -61,7 +61,45 @@ chmod 0755 "${OUT_DIR}/bitedj-arm64/bin/bitedj"
 
 tar -C "${OUT_DIR}" -czf "${OUT_DIR}/bitedj-ubuntu-24.04-arm64.tar.gz" bitedj-arm64
 
+# Build a native Debian package so apt can resolve the shared-library
+# dependencies automatically. CPack in the upstream tree still uses the
+# Mixxx package name and install paths, so the package is assembled from the
+# verified build output with BiteDJ-specific paths and metadata.
+DEB_ROOT="${BUILD_DIR}/deb-root"
+DEB_VERSION="1.0.0"
+rm -rf "${DEB_ROOT}"
+DESTDIR="${DEB_ROOT}" cmake --install "${BUILD_DIR}" --prefix /usr --strip --config Release --component Runtime
+mkdir -p "${DEB_ROOT}/usr/bin" "${DEB_ROOT}/usr/share/bitedj" "${DEB_ROOT}/DEBIAN"
+if [[ -f "${DEB_ROOT}/usr/bin/mixxx" ]]; then
+    mv "${DEB_ROOT}/usr/bin/mixxx" "${DEB_ROOT}/usr/bin/bitedj"
+fi
+if [[ -d "${DEB_ROOT}/usr/share/mixxx" ]]; then
+    cp -a "${DEB_ROOT}/usr/share/mixxx/." "${DEB_ROOT}/usr/share/bitedj/"
+    rm -rf "${DEB_ROOT}/usr/share/mixxx"
+fi
+if [[ -f "${DEB_ROOT}/usr/share/applications/org.mixxx.Mixxx.desktop" ]]; then
+    mv "${DEB_ROOT}/usr/share/applications/org.mixxx.Mixxx.desktop" \
+       "${DEB_ROOT}/usr/share/applications/us.deckshark.BiteDJ.desktop"
+    sed -i 's/org\.mixxx\.Mixxx/us.deckshark.BiteDJ/g; s/Exec=mixxx/Exec=bitedj/g; s/Mixxx/BiteDJ/g' \
+       "${DEB_ROOT}/usr/share/applications/us.deckshark.BiteDJ.desktop"
+fi
+rm -rf "${DEB_ROOT}/usr/share/mixxx" "${DEB_ROOT}/usr/share/doc/mixxx"
+cat > "${DEB_ROOT}/DEBIAN/control" <<EOF
+Package: bitedj
+Version: ${DEB_VERSION}
+Section: sound
+Priority: optional
+Architecture: arm64
+Maintainer: Deckshark <support@deckshark.us>
+Homepage: https://github.com/TeamDeckshark/bitedj
+Depends: fonts-open-sans, fonts-ubuntu, libqt6sql6-sqlite, qt6-qpa-plugins, libqt6core5compat6
+Description: BiteDJ digital DJ application
+ Independent touchscreen-oriented DJ software based on Mixxx.
+EOF
+dpkg-deb --root-owner-group --build "${DEB_ROOT}" "${OUT_DIR}/bitedj_${DEB_VERSION}_arm64.deb" >/dev/null
+
 echo
 echo "Ejecutable: ${OUT_DIR}/bitedj-arm64/bin/bitedj"
 echo "Paquete:    ${OUT_DIR}/bitedj-ubuntu-24.04-arm64.tar.gz"
+echo "Debian:     ${OUT_DIR}/bitedj_${DEB_VERSION}_arm64.deb"
 file "${OUT_DIR}/bitedj-arm64/bin/bitedj"

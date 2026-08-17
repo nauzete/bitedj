@@ -19,9 +19,9 @@ jobs:
       - name: Build BiteDJ
         run: bash tools/build-bitedj-arm64.sh
 
-      - name: Upload ARM64 package
+      - name: Upload ARM64 Debian package
         uses: actions/upload-artifact@v4
         with:
-          name: bitedj-ubuntu-24.04-arm64
-          path: dist-arm64/bitedj-ubuntu-24.04-arm64.tar.gz
+          name: bitedj-ubuntu-24.04-arm64-deb
+          path: dist-arm64/bitedj_1.0.0_arm64.deb
           if-no-files-found: error
