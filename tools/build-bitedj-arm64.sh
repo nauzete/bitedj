@@ -45,6 +45,7 @@ cmake -S "${ROOT_DIR}" -B "${BUILD_DIR}" -G Ninja \
     -DBUILD_BENCH=OFF \
     -DDOWNLOAD_MANUAL=OFF \
     -DWARNINGS_FATAL=OFF \
+    -DCMAKE_CXX_FLAGS=-Wno-error=stringop-overflow \
     -DQT6=ON \
     -DFAAD=OFF \
     -DCMAKE_INSTALL_PREFIX=/usr
