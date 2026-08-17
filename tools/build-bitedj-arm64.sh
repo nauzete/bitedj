@@ -68,7 +68,7 @@ tar -C "${OUT_DIR}" -czf "${OUT_DIR}/bitedj-ubuntu-24.04-arm64.tar.gz" bitedj-ar
 DEB_ROOT="${BUILD_DIR}/deb-root"
 DEB_VERSION="1.0.0"
 rm -rf "${DEB_ROOT}"
-DESTDIR="${DEB_ROOT}" cmake --install "${BUILD_DIR}" --prefix /usr --strip --config Release --component Runtime
+DESTDIR="${DEB_ROOT}" cmake --install "${BUILD_DIR}" --prefix /usr --strip --config Release
 mkdir -p "${DEB_ROOT}/usr/bin" "${DEB_ROOT}/usr/share/bitedj" "${DEB_ROOT}/DEBIAN"
 if [[ -f "${DEB_ROOT}/usr/bin/mixxx" ]]; then
     mv "${DEB_ROOT}/usr/bin/mixxx" "${DEB_ROOT}/usr/bin/bitedj"
