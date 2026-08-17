@@ -87,15 +87,20 @@ if [[ -f "${ROOT_DIR}/res/linux/org.mixxx.Mixxx.desktop" ]]; then
     sed -i 's/org\.mixxx\.Mixxx/us.deckshark.BiteDJ/g; s/Exec=mixxx/Exec=bitedj/g; s/Mixxx/BiteDJ/g' \
        "${DEB_ROOT}/usr/share/applications/us.deckshark.BiteDJ.desktop"
 fi
+SHLIB_DEPS="$(dpkg-shlibdeps -O -e"${DEB_ROOT}/usr/bin/bitedj" 2>/dev/null | sed -n 's/^shlibs:Depends=//p')"
+if [[ -z "${SHLIB_DEPS}" ]]; then
+    echo "No se pudieron determinar las dependencias ELF del ejecutable." >&2
+    exit 1
+fi
 cat > "${DEB_ROOT}/DEBIAN/control" <<EOF
 Package: bitedj
 Version: ${DEB_VERSION}
 Section: sound
 Priority: optional
 Architecture: arm64
-Maintainer: Deckshark <support@deckshark.us>
+Maintainer: TeamDeckshark
 Homepage: https://github.com/TeamDeckshark/bitedj
-Depends: fonts-open-sans, fonts-ubuntu, libqt6sql6-sqlite, qt6-qpa-plugins, libqt6core5compat6
+Depends: ${SHLIB_DEPS}, fonts-open-sans, fonts-ubuntu, libqt6sql6-sqlite, qt6-qpa-plugins, libqt6core5compat6
 Description: BiteDJ digital DJ application
  Independent touchscreen-oriented DJ software based on Mixxx.
 EOF
